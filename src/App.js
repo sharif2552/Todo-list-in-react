@@ -8,11 +8,6 @@ function App() {
     <>
     <Navbar />
     <AddTodos />
-
-
-
-    
-
     </>
   );
 }
