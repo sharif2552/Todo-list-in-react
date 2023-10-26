@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodo, deleteTodo } from '../store/todoSlice'; // Import your action creators
 
 function AddTodos() {
   const [task, setTask] = useState('');
-  const [todos, setTodos] = useState([]);
-
-  const handleTaskChange = (event) => {
-    setTask(event.target.value);
-  };
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos); // Retrieve the todos from the Redux store
 
   const handleAddTodo = () => {
     if (task.trim() !== '') {
-      setTodos([...todos, task]);
+      dispatch(addTodo(task)); // Dispatch the addTodo action
       setTask('');
     }
-  };
+  }
 
   const handleDeleteTodo = (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
-    setTodos(updatedTodos);
-  };
+    dispatch(deleteTodo(index)); // Dispatch the deleteTodo action with the index
+  }
 
   return (
     <div className="container mt-4">
@@ -29,7 +27,7 @@ function AddTodos() {
           className="form-control"
           placeholder="Enter a task"
           value={task}
-          onChange={handleTaskChange}
+          onChange={(e) => setTask(e.target.value)} // Update the task state
         />
         <div className="input-group-append">
           <button
