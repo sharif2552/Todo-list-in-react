@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodo, deleteTodo } from '../store/todoSlice'; // Import your action creators
-
+import { addTodo, deleteTodo } from '../store/todoSlice'; 
 function AddTodos() {
   const [task, setTask] = useState('');
   const dispatch = useDispatch();
