@@ -3,50 +3,77 @@ import React, { useState } from 'react';
 function AddTodos() {
   const [task, setTask] = useState(''); // State for the current input value
   const [todos, setTodos] = useState([]); // State for the list of todos
+  const [editIndex, setEditIndex] = useState(-1); // State to keep track of the current todo being edited
 
-  const handleAddTodo = () => {
+  const handleAddOrUpdateTodo = () => {
     if (task.trim() !== '') {
-      setTodos([...todos, task]); // Adds the new task to the todos array
-      setTask(''); // Resets the task input to be empty after adding to the list
+      if (editIndex >= 0) {
+        // Update the todo at the editIndex
+        const updatedTodos = todos.map((todo, index) => {
+          if (index === editIndex) {
+            return task;
+          }
+          return todo;
+        });
+        setTodos(updatedTodos);
+        setEditIndex(-1); // Reset editIndex
+      } else {
+        // Add new todo
+        setTodos([...todos, task]);
+      }
+      setTask(''); // Reset input field
     }
-  }
+  };
 
   const handleDeleteTodo = (index) => {
-    const newTodos = todos.filter((_, i) => i !== index); // Creates a new array without the deleted task
-    setTodos(newTodos); // Sets the new todos array as the current state
-  }
+    const newTodos = todos.filter((_, i) => i !== index);
+    setTodos(newTodos);
+  };
+
+  const handleEditTodo = (index) => {
+    setTask(todos[index]); // Load the todo into the input field for editing
+    setEditIndex(index); // Set the index of the todo being edited
+  };
 
   return (
     <div className="container mt-4">
-      <h3>Add Todos</h3>
+      <h3>Add/Update Todos</h3>
       <div className="input-group mb-3">
         <input
           type="text"
           className="form-control"
-          placeholder="Enter a task"
+          placeholder="Enter a task or edit selected"
           value={task}
-          onChange={(e) => setTask(e.target.value)} // Updates the task state as the input changes
+          onChange={(e) => setTask(e.target.value)}
         />
         <div className="input-group-append">
           <button
             className="btn btn-primary"
             type="button"
-            onClick={handleAddTodo} // Calls handleAddTodo when the button is clicked
+            onClick={handleAddOrUpdateTodo}
           >
-            Add
+            {editIndex >= 0 ? 'Update' : 'Add'}
           </button>
         </div>
       </div>
       <ul className="list-group">
-        {todos.map((todo, index) => ( // Maps over the todos array and renders each todo as a list item
-          <li className="list-group-item d-flex justify-content-between" key={index}>
+        {todos.map((todo, index) => (
+          <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
             {todo}
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={() => handleDeleteTodo(index)} // Calls handleDeleteTodo with the index of the todo to be deleted
-            >
-              Delete
-            </button>
+            <div>
+              <button
+                className="btn btn-sm btn-info mr-2"
+                onClick={() => handleEditTodo(index)}
+              >
+                Edit
+              </button>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => handleDeleteTodo(index)}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
